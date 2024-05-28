@@ -20,4 +20,9 @@ public class UserController {
         return userService.login(userDTO);
     }
 
+    @GetMapping("/userGet")
+    public User userGet(@RequestParam String token) {
+        return userService.userGet(token);
+    }
+
 }

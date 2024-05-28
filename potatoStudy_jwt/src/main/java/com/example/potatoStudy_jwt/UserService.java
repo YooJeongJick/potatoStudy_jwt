@@ -1,5 +1,6 @@
 package com.example.potatoStudy_jwt;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,18 @@ public class UserService {
             return "잘못된 비밀번호";
         }
 
-        // 로그인 성공 시 JWT 토큰 생성 및 반환
         String token = jwtService.createToken(user.getId(), user.getEmail(), user.getPassword());
         return user.getEmail() + " 로그인 완료\n" + token;
     }
+
+    public User userGet(String token) {
+        DecodedJWT decodedJWT = jwtService.verifyToken(token);
+        if (decodedJWT == null) {
+            return null;
+        }
+
+        String email =  decodedJWT.getClaim("name").asString();
+        return userRepository.findByEmail(email);
+    }
+
 }
