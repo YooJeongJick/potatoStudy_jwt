@@ -23,7 +23,7 @@ public class JwtService {
         String createToken = JWT.create()
                 .withExpiresAt(tokenExp)
                 .withIssuedAt(tokeniat)
-                .withClaim("name", email)
+                .withClaim("id", id)
                 .sign(Algorithm.HMAC512(secretKey));
 
         return createToken;

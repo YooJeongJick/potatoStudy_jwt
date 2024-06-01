@@ -3,7 +3,12 @@ package com.example.potatoStudy_jwt;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,31 +25,37 @@ public class UserService {
         return user.getEmail() + " 회원가입 완료";
     }
 
-    public String login(UserDTO userDTO) {
+    public ResponseEntity<String> login(UserDTO userDTO) {
         String inputEmail = userDTO.getEmail();
         User user = userRepository.findByEmail(inputEmail);
         if (user == null) {
-            return "잘못된 이메일";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일");
         }
 
         String inputPassword = userDTO.getPassword();
         String password = user.getPassword();
         if (!inputPassword.equals(password)) {
-            return "잘못된 비밀번호";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호");
         }
 
         String token = jwtService.createToken(user.getId(), user.getEmail(), user.getPassword());
-        return user.getEmail() + " 로그인 완료\n" + token;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(user.getEmail() + " 로그인 완료");
     }
 
-    public User userGet(String token) {
+    public Optional<User> userGet(String token) {
         DecodedJWT decodedJWT = jwtService.verifyToken(token);
         if (decodedJWT == null) {
             return null;
         }
 
-        String email =  decodedJWT.getClaim("name").asString();
-        return userRepository.findByEmail(email);
+        Long id = decodedJWT.getClaim("id").asLong();
+        return userRepository.findById(id);
     }
 
 }

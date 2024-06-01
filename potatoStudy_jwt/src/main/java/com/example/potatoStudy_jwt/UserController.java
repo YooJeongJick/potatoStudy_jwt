@@ -1,7 +1,10 @@
 package com.example.potatoStudy_jwt;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -16,12 +19,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
         return userService.login(userDTO);
     }
 
     @GetMapping("/userGet")
-    public User userGet(@RequestParam String token) {
+    public Optional<User> userGet(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
         return userService.userGet(token);
     }
 
