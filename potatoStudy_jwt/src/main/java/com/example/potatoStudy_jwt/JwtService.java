@@ -12,17 +12,23 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    static Long EXPIRE_TIME = 60L * 60L * 1000L;
+    static Long accessTokenExpMinutes = 60L * 60L * 1000L;
+    static Long refreshTokenExpMinutes = 2L * 7L * 24L * 60L * 60L * 1000L;
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String createToken(Long id, String email, String password) {
-        Date tokenExp = new Date(System.currentTimeMillis() + (EXPIRE_TIME));
-        Date tokeniat = new Date(System.currentTimeMillis());
+    public String createAccessToken(Long id){
+        return this.createToken(id, accessTokenExpMinutes);
+    }
 
+    public String createRefreshToken(Long id) {
+        return this.createToken(id, refreshTokenExpMinutes);
+    }
+
+    public String createToken(Long id, Long validTime) {
         String createToken = JWT.create()
-                .withExpiresAt(tokenExp)
-                .withIssuedAt(tokeniat)
+                .withExpiresAt(new Date(System.currentTimeMillis() + validTime))
+                .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withClaim("id", id)
                 .sign(Algorithm.HMAC512(secretKey));
 

@@ -38,10 +38,12 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호");
         }
 
-        String token = jwtService.createToken(user.getId(), user.getEmail(), user.getPassword());
+        String accessToken = jwtService.createAccessToken(user.getId());
+        String refreshToken = jwtService.createRefreshToken(user.getId());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("RefreshToken", "Bearer " + refreshToken);
 
         return ResponseEntity.ok()
                 .headers(headers)
