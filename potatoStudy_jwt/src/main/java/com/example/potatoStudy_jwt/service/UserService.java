@@ -1,14 +1,16 @@
-package com.example.potatoStudy_jwt;
+package com.example.potatoStudy_jwt.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.potatoStudy_jwt.User;
+import com.example.potatoStudy_jwt.UserDTO;
+import com.example.potatoStudy_jwt.UserRepository;
+import com.example.potatoStudy_jwt.error.ErrorCode;
+import com.example.potatoStudy_jwt.error.exception.NotFoundException;
+import com.example.potatoStudy_jwt.error.exception.UnAuthorizedException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -18,25 +20,21 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    // 유저 등록
-    public String signUp(UserDTO userDTO) {
+    public void signUp(UserDTO userDTO) {
         User user = userDTO.toEntity();
         userRepository.save(user);
-        return user.getEmail() + " 회원가입 완료";
     }
 
-    public ResponseEntity<String> login(UserDTO userDTO) {
+    public HttpHeaders login(UserDTO userDTO) {
         String inputEmail = userDTO.getEmail();
         User user = userRepository.findByEmail(inputEmail);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일");
-        }
+        if (user == null)
+            throw new NotFoundException("존재하지 않는 유저", ErrorCode.NOT_FOUND_EXCEPTION);
 
         String inputPassword = userDTO.getPassword();
         String password = user.getPassword();
-        if (!inputPassword.equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호");
-        }
+        if (!inputPassword.equals(password))
+            throw new UnAuthorizedException("비밀번호 불일치", ErrorCode.UNAUTHORIZED_EXCEPTION);
 
         String accessToken = jwtService.createAccessToken(user.getId());
         String refreshToken = jwtService.createRefreshToken(user.getId());
@@ -45,19 +43,19 @@ public class UserService {
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("RefreshToken", "Bearer " + refreshToken);
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(user.getEmail() + " 로그인 완료");
+        return headers;
     }
 
-    public Optional<User> userGet(String token) {
+    public UserDTO userGet(String token) {
         DecodedJWT decodedJWT = jwtService.verifyToken(token);
-        if (decodedJWT == null) {
-            return null;
-        }
 
         Long id = decodedJWT.getClaim("id").asLong();
-        return userRepository.findById(id);
+        User user = userRepository.findById(id).orElse(null);
+
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .build();
     }
 
 }

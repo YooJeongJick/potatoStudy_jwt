@@ -1,4 +1,4 @@
-package com.example.potatoStudy_jwt;
+package com.example.potatoStudy_jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
