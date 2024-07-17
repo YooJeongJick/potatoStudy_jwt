@@ -1,6 +1,5 @@
 package com.example.potatoStudy_jwt;
 
-import com.example.potatoStudy_jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
