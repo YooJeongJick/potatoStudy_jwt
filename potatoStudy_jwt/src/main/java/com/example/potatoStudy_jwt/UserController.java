@@ -15,13 +15,13 @@ public class UserController {
     @PostMapping("/signUp")
     public ResponseEntity<String> signUp(@RequestBody UserDTO userDTO) {
         userService.signUp(userDTO);
-        return ResponseEntity.ok().body("회원가입 완료");
+        return ResponseEntity.ok().body("회원가입을 완료했습니다.");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
         HttpHeaders headers = userService.login(userDTO);
-        return ResponseEntity.ok().headers(headers).body("로그인 완료");
+        return ResponseEntity.ok().headers(headers).body("로그인을 완료했습니다.");
     }
 
     @GetMapping("/userGet")

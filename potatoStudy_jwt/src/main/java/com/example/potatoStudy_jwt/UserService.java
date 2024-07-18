@@ -49,10 +49,10 @@ public class UserService {
     }
 
     public UserDTO userGet(String token) {
-        DecodedJWT decodedJWT = jwtService.verifyToken(token);
-
-        Long id = decodedJWT.getClaim("id").asLong();
+        Long id = Long.valueOf(jwtService.verifyToken(token));
         User user = userRepository.findById(id).orElse(null);
+        if (user == null)
+            throw new NotFoundException("존재하지 않는 유저입니다.", ErrorCode.NOT_FOUND_EXCEPTION);
 
         return UserDTO.builder()
                 .email(user.getEmail())

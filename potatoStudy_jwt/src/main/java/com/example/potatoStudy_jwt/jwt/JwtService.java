@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -35,18 +36,8 @@ public class JwtService {
         return this.createToken(id, refreshTokenExpMinutes);
     }
 
-//    public String createToken(Long id, Long validTime) {
-//        String createToken = JWT.create()
-//                .withExpiresAt(new Date(System.currentTimeMillis() + validTime))
-//                .withIssuedAt(new Date(System.currentTimeMillis()))
-//                .withClaim("id", id)
-//                .sign(Algorithm.HMAC512(secretKey));
-//
-//        return createToken;
-//    }
-
     public String createToken(Long id, Long validTime) {
-        Claims claims = Jwts.claims().setSubject(String.valueOf(id));
+        Claims claims = Jwts.claims().setSubject(id.toString());
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
         Date date = new Date();
 
@@ -58,13 +49,12 @@ public class JwtService {
                 .compact();
     }
 
-    public DecodedJWT verifyToken(String token) {
-        try {
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC512(secretKey)).build();
-            return verifier.verify(token);
-        } catch (JWTVerificationException e) {
-            return null;
-        }
+    public String verifyToken(String token) {
+        JwtParser jwtParser = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build();
+
+        return jwtParser.parseClaimsJws(token).getBody().getSubject();
     }
 
 }
