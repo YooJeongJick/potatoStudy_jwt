@@ -18,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    // 회원 가입
     public void signUp(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
             throw new UnAuthorizedException("이미 존재하는 이메일입니다.", ErrorCode.UNAUTHORIZED_EXCEPTION);
@@ -27,6 +28,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // 로그인
     public HttpHeaders login(UserDTO userDTO) {
         String inputEmail = userDTO.getEmail();
         User user = userRepository.findByEmail(inputEmail);
@@ -38,6 +40,7 @@ public class UserService {
         if (!inputPassword.equals(password))
             throw new UnAuthorizedException("비밀번호가 일치하지 않습니다.", ErrorCode.UNAUTHORIZED_EXCEPTION);
 
+        // 토큰 생성
         String accessToken = jwtService.createAccessToken(user.getId());
         String refreshToken = jwtService.createRefreshToken(user.getId());
 
@@ -48,6 +51,7 @@ public class UserService {
         return headers;
     }
 
+    // 유저 검색
     public UserDTO userGet(String token) {
         Long id = Long.valueOf(jwtService.verifyToken(token));
         User user = userRepository.findById(id).orElse(null);
