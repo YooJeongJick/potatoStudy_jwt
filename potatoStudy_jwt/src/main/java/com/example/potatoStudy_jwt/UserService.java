@@ -1,10 +1,9 @@
 package com.example.potatoStudy_jwt;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.potatoStudy_jwt.error.ErrorCode;
 import com.example.potatoStudy_jwt.error.exception.NotFoundException;
 import com.example.potatoStudy_jwt.error.exception.UnAuthorizedException;
-import com.example.potatoStudy_jwt.jwt.JwtService;
+import com.example.potatoStudy_jwt.jwt.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
 
     // 회원 가입
     public void signUp(UserDTO userDTO) {
@@ -41,8 +40,8 @@ public class UserService {
             throw new UnAuthorizedException("비밀번호가 일치하지 않습니다.", ErrorCode.UNAUTHORIZED_EXCEPTION);
 
         // 토큰 생성
-        String accessToken = jwtService.createAccessToken(user.getId());
-        String refreshToken = jwtService.createRefreshToken(user.getId());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail());
+        String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -53,8 +52,8 @@ public class UserService {
 
     // 유저 검색
     public UserDTO userGet(String token) {
-        Long id = Long.valueOf(jwtService.verifyToken(token));
-        User user = userRepository.findById(id).orElse(null);
+        String email = String.valueOf(jwtProvider.verifyToken(token));
+        User user = userRepository.findByEmail(email);
         if (user == null)
             throw new NotFoundException("존재하지 않는 유저입니다.", ErrorCode.NOT_FOUND_EXCEPTION);
 
