@@ -4,6 +4,7 @@ import com.example.potatoStudy_jwt.error.ErrorCode;
 import com.example.potatoStudy_jwt.error.exception.NotFoundException;
 import com.example.potatoStudy_jwt.error.exception.UnAuthorizedException;
 import com.example.potatoStudy_jwt.jwt.JwtProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +18,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
-    // 회원 가입
     public void signUp(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
             throw new UnAuthorizedException("이미 존재하는 이메일입니다.", ErrorCode.UNAUTHORIZED_EXCEPTION);
@@ -27,8 +27,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // 로그인
-    public HttpHeaders login(UserDTO userDTO) {
+    public void login(UserDTO userDTO, HttpServletResponse response) {
         String inputEmail = userDTO.getEmail();
         User user = userRepository.findByEmail(inputEmail);
         if (user == null)
@@ -39,18 +38,9 @@ public class UserService {
         if (!inputPassword.equals(password))
             throw new UnAuthorizedException("비밀번호가 일치하지 않습니다.", ErrorCode.UNAUTHORIZED_EXCEPTION);
 
-        // 토큰 생성
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
-        String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("RefreshToken", "Bearer " + refreshToken);
-
-        return headers;
+        this.setJwtTokenInHeader(user.getEmail(), response);
     }
 
-    // 유저 검색
     public UserDTO userGet(String token) {
         String email = String.valueOf(jwtProvider.verifyToken(token));
         User user = userRepository.findByEmail(email);
@@ -61,6 +51,14 @@ public class UserService {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();
+    }
+
+    public void setJwtTokenInHeader(String email, HttpServletResponse response) {
+        String accessToken = jwtProvider.createAccessToken(email);
+        String refreshToken = jwtProvider.createRefreshToken(email);
+
+        jwtProvider.setHeaderAccessToken(response, accessToken);
+        jwtProvider.setHeaderRefreshToken(response, refreshToken);
     }
 
 }

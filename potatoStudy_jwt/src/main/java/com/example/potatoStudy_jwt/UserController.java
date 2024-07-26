@@ -1,5 +1,6 @@
 package com.example.potatoStudy_jwt;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
-        HttpHeaders headers = userService.login(userDTO);
-        return ResponseEntity.ok().headers(headers).body("로그인을 완료했습니다.");
+    public ResponseEntity<String> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+        userService.login(userDTO, response);
+        return ResponseEntity.ok().body("로그인을 완료했습니다.");
     }
 
     @GetMapping("/userGet")
