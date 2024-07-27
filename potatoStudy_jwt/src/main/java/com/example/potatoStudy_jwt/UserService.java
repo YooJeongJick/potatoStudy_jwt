@@ -17,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final RedisJwtService redisJwtService;
 
     public void signUp(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -59,6 +60,8 @@ public class UserService {
 
         jwtProvider.setHeaderAccessToken(response, accessToken);
         jwtProvider.setHeaderRefreshToken(response, refreshToken);
+
+        redisJwtService.setValues(refreshToken, email);
     }
 
 }
