@@ -1,5 +1,6 @@
 package com.example.potatoStudy_jwt;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -25,11 +26,22 @@ public class UserController {
         return ResponseEntity.ok().body("로그인을 완료했습니다.");
     }
 
-    @GetMapping("/userGet")
-    public ResponseEntity<UserDTO> userGet(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.replace("Bearer ", "");
-        UserDTO user = userService.userGet(token);
-        return ResponseEntity.ok(user);
+//    @GetMapping("/userGet")
+//    public ResponseEntity<UserDTO> userGet(@RequestHeader("Authorization") String authorizationHeader) {
+//        String token = authorizationHeader.replace("Bearer ", "");
+//        UserDTO user = userService.userGet(token);
+//        return ResponseEntity.ok(user);
+//    }
+
+//    @GetMapping("/userGet")
+//    public ResponseEntity<UserDTO> userGet(HttpServletRequest request) {
+//        UserDTO user = userService.userGet(request);
+//        return ResponseEntity.ok(user);
+//    }
+
+    @GetMapping("/reissue")
+    public ResponseEntity<String> reissueToken(HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok("토큰 재발급을 완료했습니다.");
     }
 
 }

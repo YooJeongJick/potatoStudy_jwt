@@ -42,17 +42,17 @@ public class UserService {
         this.setJwtTokenInHeader(user.getEmail(), response);
     }
 
-    public UserDTO userGet(String token) {
-        String email = String.valueOf(jwtProvider.verifyToken(token));
-        User user = userRepository.findByEmail(email);
-        if (user == null)
-            throw new NotFoundException("존재하지 않는 유저입니다.", ErrorCode.NOT_FOUND_EXCEPTION);
-
-        return UserDTO.builder()
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .build();
-    }
+//    public UserDTO userGet(String token) {
+//        String email = String.valueOf(jwtProvider.verifyToken(token));
+//        User user = userRepository.findByEmail(email);
+//        if (user == null)
+//            throw new NotFoundException("존재하지 않는 유저입니다.", ErrorCode.NOT_FOUND_EXCEPTION);
+//
+//        return UserDTO.builder()
+//                .email(user.getEmail())
+//                .password(user.getPassword())
+//                .build();
+//    }
 
     public void setJwtTokenInHeader(String email, HttpServletResponse response) {
         String accessToken = jwtProvider.createAccessToken(email);
