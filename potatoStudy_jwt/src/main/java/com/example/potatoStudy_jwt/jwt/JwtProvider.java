@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String verifyToken(String token) {
+    public String getUserEmail(String token) {
         JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .build();
@@ -59,6 +60,12 @@ public class JwtProvider {
 
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
         response.setHeader("RefreshToken", "Bearer " + refreshToken);
+    }
+
+    public String resolveAccessToken(HttpServletRequest request) {
+        if (request.getHeader("Authorization") != null)
+            return request.getHeader("Authorization").substring(7);
+        return null;
     }
 
 }

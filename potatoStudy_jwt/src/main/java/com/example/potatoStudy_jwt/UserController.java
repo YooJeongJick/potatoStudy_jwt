@@ -33,11 +33,11 @@ public class UserController {
 //        return ResponseEntity.ok(user);
 //    }
 
-//    @GetMapping("/userGet")
-//    public ResponseEntity<UserDTO> userGet(HttpServletRequest request) {
-//        UserDTO user = userService.userGet(request);
-//        return ResponseEntity.ok(user);
-//    }
+    @GetMapping("/userGet")
+    public ResponseEntity<String> userGet(HttpServletRequest request) {
+        String user = userService.userGet(request);
+        return ResponseEntity.ok(user);
+    }
 
     @GetMapping("/reissue")
     public ResponseEntity<String> reissueToken(HttpServletRequest request, HttpServletResponse response) {

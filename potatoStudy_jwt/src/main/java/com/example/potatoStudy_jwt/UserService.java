@@ -4,6 +4,7 @@ import com.example.potatoStudy_jwt.error.ErrorCode;
 import com.example.potatoStudy_jwt.error.exception.NotFoundException;
 import com.example.potatoStudy_jwt.error.exception.UnAuthorizedException;
 import com.example.potatoStudy_jwt.jwt.JwtProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,11 @@ public class UserService {
 //                .password(user.getPassword())
 //                .build();
 //    }
+
+    public String userGet(HttpServletRequest request) {
+        String token = jwtProvider.resolveAccessToken(request);
+        return token == null ? null : jwtProvider.getUserEmail(token);
+    }
 
     public void setJwtTokenInHeader(String email, HttpServletResponse response) {
         String accessToken = jwtProvider.createAccessToken(email);
