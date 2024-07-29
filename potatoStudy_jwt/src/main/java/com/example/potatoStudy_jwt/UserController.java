@@ -26,17 +26,10 @@ public class UserController {
         return ResponseEntity.ok().body("로그인을 완료했습니다.");
     }
 
-//    @GetMapping("/userGet")
-//    public ResponseEntity<UserDTO> userGet(@RequestHeader("Authorization") String authorizationHeader) {
-//        String token = authorizationHeader.replace("Bearer ", "");
-//        UserDTO user = userService.userGet(token);
-//        return ResponseEntity.ok(user);
-//    }
-
     @GetMapping("/userGet")
     public ResponseEntity<String> userGet(HttpServletRequest request) {
-        String user = userService.userGet(request);
-        return ResponseEntity.ok(user);
+        String userEmail = userService.userGet(request);
+        return ResponseEntity.ok(userEmail);
     }
 
     @GetMapping("/reissue")

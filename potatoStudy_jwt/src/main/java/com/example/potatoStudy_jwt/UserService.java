@@ -43,21 +43,9 @@ public class UserService {
         this.setJwtTokenInHeader(user.getEmail(), response);
     }
 
-//    public UserDTO userGet(String token) {
-//        String email = String.valueOf(jwtProvider.verifyToken(token));
-//        User user = userRepository.findByEmail(email);
-//        if (user == null)
-//            throw new NotFoundException("존재하지 않는 유저입니다.", ErrorCode.NOT_FOUND_EXCEPTION);
-//
-//        return UserDTO.builder()
-//                .email(user.getEmail())
-//                .password(user.getPassword())
-//                .build();
-//    }
-
     public String userGet(HttpServletRequest request) {
         String token = jwtProvider.resolveAccessToken(request);
-        return token == null ? null : jwtProvider.getUserEmail(token);
+        return token == null ? null : jwtProvider.verifyToken(token);
     }
 
     public void setJwtTokenInHeader(String email, HttpServletResponse response) {

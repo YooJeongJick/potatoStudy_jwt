@@ -46,7 +46,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getUserEmail(String token) {
+    public String verifyToken(String token) {
         JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .build();
