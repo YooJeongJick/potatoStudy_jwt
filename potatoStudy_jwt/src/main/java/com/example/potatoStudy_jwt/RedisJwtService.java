@@ -22,4 +22,16 @@ public class RedisJwtService {
         operations.set(token, map, Duration.ofDays(7));
     }
 
+    public Map<String, String> getValues(String token) {
+        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+        Object object = operations.get(token);
+        if (object instanceof Map)
+            return (Map<String, String>) object;
+        return null;
+    }
+
+    public void delValues(String token) {
+        redisTemplate.delete(token);
+    }
+
 }

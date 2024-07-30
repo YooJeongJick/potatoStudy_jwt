@@ -58,4 +58,19 @@ public class UserService {
         redisJwtService.setValues(refreshToken, email);
     }
 
+    public void reissueToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtProvider.resolveRefreshToken(request);
+
+        String newAccessToken = jwtProvider.reissueAccessToken(refreshToken);
+        String newRefreshToken = jwtProvider.reissueRefreshToken(refreshToken);
+
+        jwtProvider.setHeaderAccessToken(response, newAccessToken);
+        jwtProvider.setHeaderRefreshToken(response, newRefreshToken);
+    }
+
+    public String test(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtProvider.resolveRefreshToken(request);
+        return redisJwtService.getValues(refreshToken).get("email");
+    }
+
 }
