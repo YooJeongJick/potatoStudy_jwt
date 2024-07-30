@@ -68,9 +68,4 @@ public class UserService {
         jwtProvider.setHeaderRefreshToken(response, newRefreshToken);
     }
 
-    public String test(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtProvider.resolveRefreshToken(request);
-        return redisJwtService.getValues(refreshToken).get("email");
-    }
-
 }

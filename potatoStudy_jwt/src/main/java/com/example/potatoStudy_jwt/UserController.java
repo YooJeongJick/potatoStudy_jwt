@@ -32,12 +32,6 @@ public class UserController {
         return ResponseEntity.ok(userEmail);
     }
 
-//    @GetMapping("/reissue")
-//    public ResponseEntity<String> reissueToken(HttpServletRequest request, HttpServletResponse response) {
-//        userService.reissueToken(request, response);
-//        return ResponseEntity.ok("토큰 재발급을 완료했습니다.");
-//    }
-
     @GetMapping("/reissue")
     public ResponseEntity<String> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         userService.reissueToken(request, response);
