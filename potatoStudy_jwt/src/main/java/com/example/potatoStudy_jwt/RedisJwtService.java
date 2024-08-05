@@ -34,4 +34,9 @@ public class RedisJwtService {
         redisTemplate.delete(token);
     }
 
+    public boolean isRefreshTokenValid(String token) {
+        Map<String, String> values = getValues(token);
+        return values != null;
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.potatoStudy_jwt.jwt;
 
+import com.example.potatoStudy_jwt.RedisJwtService;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import java.io.IOException;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final RedisJwtService redisJwtService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -28,6 +31,19 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         String accessToken = jwtProvider.resolveAccessToken(request);
         String refreshToken = jwtProvider.resolveRefreshToken(request);
+
+        try {
+            if (accessToken == null && refreshToken != null) {
+                if (jwtProvider.validateToken(refreshToken) &&
+                redisJwtService.isRefreshTokenValid(refreshToken) &&
+                path.contains("/reissue")) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+        } catch (MalformedJwtException e) {}
     }
 
 }

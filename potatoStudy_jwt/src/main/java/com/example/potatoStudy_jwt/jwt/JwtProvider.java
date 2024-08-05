@@ -5,10 +5,7 @@ import com.example.potatoStudy_jwt.User;
 import com.example.potatoStudy_jwt.UserRepository;
 import com.example.potatoStudy_jwt.error.ErrorCode;
 import com.example.potatoStudy_jwt.error.exception.NotFoundException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -114,6 +111,26 @@ public class JwtProvider {
         redisJwtService.setValues(newRefreshToken, email);
 
         return newRefreshToken;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (MalformedJwtException e) {
+            throw new MalformedJwtException("Invalid JWT token");
+        } catch (ExpiredJwtException e) {
+            throw new ExpiredJwtException(null, null, "Token has expired");
+        } catch (UnsupportedJwtException e) {
+            throw new UnsupportedJwtException("JWT token is unsupported");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("JWT claims string is empty");
+        }
     }
 
 }
