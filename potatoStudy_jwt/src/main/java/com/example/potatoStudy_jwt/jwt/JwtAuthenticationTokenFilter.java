@@ -1,6 +1,6 @@
 package com.example.potatoStudy_jwt.jwt;
 
-import com.example.potatoStudy_jwt.RedisJwtService;
+import com.example.potatoStudy_jwt.service.RedisJwtService;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +20,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private final RedisJwtService redisJwtService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String path = request.getRequestURI();
 
@@ -35,15 +36,21 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         try {
             if (accessToken == null && refreshToken != null) {
                 if (jwtProvider.validateToken(refreshToken) &&
-                redisJwtService.isRefreshTokenValid(refreshToken) &&
-                path.contains("/reissue")) {
-                    filterChain.doFilter(request, response);
-                } else {
+                        redisJwtService.isRefreshTokenValid(refreshToken) &&
+                        path.contains("/reissue")) {
                     filterChain.doFilter(request, response);
                     return;
                 }
+            } else if (accessToken == null) {
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                if (jwtProvider.validateToken(accessToken)) {}
             }
         } catch (MalformedJwtException e) {}
+    }
+
+    private void setAuthentication(String token) {
     }
 
 }

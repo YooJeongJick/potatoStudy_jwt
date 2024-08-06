@@ -1,6 +1,6 @@
 package com.example.potatoStudy_jwt.jwt;
 
-import com.example.potatoStudy_jwt.RedisJwtService;
+import com.example.potatoStudy_jwt.service.RedisJwtService;
 import com.example.potatoStudy_jwt.User;
 import com.example.potatoStudy_jwt.UserRepository;
 import com.example.potatoStudy_jwt.error.ErrorCode;
@@ -12,12 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

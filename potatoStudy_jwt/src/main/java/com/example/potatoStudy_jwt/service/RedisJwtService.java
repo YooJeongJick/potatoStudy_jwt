@@ -1,4 +1,4 @@
-package com.example.potatoStudy_jwt;
+package com.example.potatoStudy_jwt.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

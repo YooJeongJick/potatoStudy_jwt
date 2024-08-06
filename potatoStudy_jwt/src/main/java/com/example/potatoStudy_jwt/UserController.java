@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/userGet")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> userGet(HttpServletRequest request) {
         String userEmail = userService.userGet(request);
         return ResponseEntity.ok(userEmail);

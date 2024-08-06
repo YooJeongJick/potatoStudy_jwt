@@ -4,11 +4,11 @@ import com.example.potatoStudy_jwt.error.ErrorCode;
 import com.example.potatoStudy_jwt.error.exception.NotFoundException;
 import com.example.potatoStudy_jwt.error.exception.UnAuthorizedException;
 import com.example.potatoStudy_jwt.jwt.JwtProvider;
+import com.example.potatoStudy_jwt.service.RedisJwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 @Service
