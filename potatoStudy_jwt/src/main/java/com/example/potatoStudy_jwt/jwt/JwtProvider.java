@@ -1,5 +1,6 @@
 package com.example.potatoStudy_jwt.jwt;
 
+import com.example.potatoStudy_jwt.service.CustomUserDetailService;
 import com.example.potatoStudy_jwt.service.RedisJwtService;
 import com.example.potatoStudy_jwt.User;
 import com.example.potatoStudy_jwt.UserRepository;
@@ -11,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -23,6 +26,7 @@ public class JwtProvider {
 
     private final UserRepository userRepository;
     private final RedisJwtService redisJwtService;
+    private final CustomUserDetailService customUserDetailService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -129,6 +133,11 @@ public class JwtProvider {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("JWT claims string is empty");
         }
+    }
+
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(this.verifyToken(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
 }
