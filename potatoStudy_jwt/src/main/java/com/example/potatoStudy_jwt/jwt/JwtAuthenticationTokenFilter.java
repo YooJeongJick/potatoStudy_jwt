@@ -33,7 +33,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path. contains("/user/signUp") || path.contains("/user/login")) {
+        if (path.contains("/user/signUp") || path.contains("/user/login")) {
             filterChain.doFilter(request, response);
             return;
         }
