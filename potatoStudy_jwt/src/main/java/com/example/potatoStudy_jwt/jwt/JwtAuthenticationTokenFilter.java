@@ -48,7 +48,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         redisJwtService.isRefreshTokenValid(refreshToken) &&
                         path.contains("/user/reissue")) {
                     filterChain.doFilter(request, response);
-                    return;
                 }
             } else if (accessToken == null) {
                 filterChain.doFilter(request, response);
