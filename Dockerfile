@@ -1,9 +1,8 @@
-FROM openjdk:21-jdk AS build
+FROM openjdk:21-jdk
 WORKDIR /tmp
+RUN apt-get update && apt-get install -y findutils
 COPY . /tmp
-RUN apt-get update && apt-get install -y findutils \
-    && chmod +x ./gradlew \
-    && ./gradlew clean bootJar
+RUN chmod +x ./gradlew && ./gradlew clean bootJar
 
 FROM openjdk:21-jdk
 WORKDIR /tmp
