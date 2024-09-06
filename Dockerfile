@@ -1,8 +1,8 @@
 FROM openjdk:21-jdk AS build
 WORKDIR /tmp
 COPY . /tmp
-RUN microdnf install findutils
-RUN chmod +x ./gradlew && ./gradlew clean bootJar
+RUN apt-get update && apt-get install -y findutils && \
+    chmod +x ./gradlew && ./gradlew clean bootJar
 
 FROM openjdk:21-jdk
 WORKDIR /tmp
