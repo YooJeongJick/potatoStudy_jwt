@@ -1,6 +1,6 @@
-FROM openjdk:21-jdk
+FROM debian:bullseye-slim AS build
 WORKDIR /tmp
-RUN apt-get update && apt-get install -y findutils
+RUN apt-get update && apt-get install -y openjdk-21-jdk findutils
 COPY . /tmp
 RUN chmod +x ./gradlew && ./gradlew clean bootJar
 
