@@ -1,6 +1,5 @@
 FROM openjdk:21-jdk-alpine AS builder
 WORKDIR /tmp
-RUN apt-get update && apt-get install -y openjdk-21-jdk findutils
 COPY . /tmp
 RUN chmod +x ./gradlew && ./gradlew clean bootJar
 
