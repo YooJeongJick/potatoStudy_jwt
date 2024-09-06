@@ -1,6 +1,7 @@
 FROM openjdk:21-jdk AS build
 WORKDIR /tmp
 COPY . /tmp
+RUN microdnf install findutils
 RUN chmod +x ./gradlew && ./gradlew clean bootJar
 
 FROM openjdk:21-jdk
